@@ -14,20 +14,20 @@
            "https://thriftyhomesteader.com/wp-content/uploads/2020/02/1.pin_-2-200x300.png")))
 
 (defn door
-  [{:keys [id open? prize? selected?]} on-click]
+  [{:keys [id open? prize?]}]
   (fn []
-    [:img {:src (door-image open? prize?)
+    [:img#door {:src (door-image open? prize?)
            :width 200
            :height 300
            :border (when @(subscribe [::subs/door-selected? id]) "5px")
-           :on-click #(on-click id)}]))
+           :on-click #(dispatch [::events/select-door id])}]))
 
 (defn door-set
   []
   (let [doors @(subscribe [::subs/doors])]
     [:div
      (for [d doors]
-       ^{:key (:id d)} [door d #(dispatch [::events/select-door %])])]))
+       ^{:key (:id d)} [door d])]))
 
 (defn main-panel
   []

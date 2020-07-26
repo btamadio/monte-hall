@@ -20,5 +20,6 @@
 
 (defn init []
   (re-frame/dispatch-sync [::events/initialize-db])
+  (re-frame/dispatch-sync [::events/allocate-prize])
   (dev-setup)
   (mount-root))

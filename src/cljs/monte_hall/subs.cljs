@@ -7,6 +7,11 @@
  (fn [db]
    (:doors db)))
 
+(reg-sub
+ ::selected-door
+ (fn [db]
+   (:selected-door db)))
+
 ; (subscribe ::door 1) as an example
 (reg-sub
  ::door-selected?

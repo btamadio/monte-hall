@@ -12,7 +12,8 @@
 (rf/reg-event-db
  ::new-game
  (fn [db _]
-   (merge db/new-game db)))
+   (rf/dispatch [::allocate-prize])
+   (merge db db/new-game)))
 
 (rf/reg-event-fx
  ::allocate-prize
@@ -23,9 +24,37 @@
      {:db (assoc-in db [:doors val :prize?] true)})))
 
 (rf/reg-event-db
- ::select-door
+ ::set-selected-door
  (fn [db [_ id]]
    (assoc db :selected-door id)))
+
+; Definitely should have some unit tests for this logic
+(defn first-reveal
+  [doors selected-door tiebreaker]
+  (let [choices (filter #(and (not (:prize? %)) (not= (:id %) selected-door)) doors)
+        num-choices (count choices)]
+    (if (= num-choices 1)
+      (:id  (first choices))
+      (:id (nth choices tiebreaker)))))
+
+(rf/reg-event-fx
+ ::first-reveal
+ [(rf/inject-cofx :random-int 2)]
+ (fn [cofx [_ _]]
+   (let [db (:db cofx)
+         tiebreaker (:random-int cofx)
+         door-to-open (first-reveal (:doors db) (:selected-door db) tiebreaker)]
+     {:db (-> db
+              (assoc-in [:doors door-to-open :open?] true)
+              (assoc :stage :first-reveal))})))
+
+(rf/reg-event-db
+ ::second-reveal
+ (fn [db [_ _]]
+   (let [selected-door (:selected-door db)]
+     (-> db
+         (assoc-in [:doors selected-door :open?] true)
+         (assoc :stage :final-reveal)))))
 
 (rf/reg-cofx
  :random-int

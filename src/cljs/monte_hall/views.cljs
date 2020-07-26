@@ -19,7 +19,7 @@
               :width 200
               :height 300
               :border (when selected? "5px")
-              :on-click #(dispatch [::events/select-door id])}])
+              :on-click (when (not open?) #(dispatch [::events/set-selected-door id]))}])
 
 (defn door-set
   []
@@ -29,7 +29,23 @@
      (for [d doors]
        ^{:key (:id d)} [door d (= (:id d) selected-door)])]))
 
+(defn select-button
+  [on-click]
+  (when-let [door-id @(subscribe [::subs/selected-door])]
+    
+    [:button {:on-click on-click}
+     "Choose Door " (inc door-id)]))
+
+(defn new-game-button
+  []
+  [:button {:on-click #(dispatch [::events/new-game])}
+   "New Game"])
+
 (defn main-panel
   []
   [:<>
-   [door-set]])
+   [door-set]
+   (case @(subscribe [::subs/game-stage])
+     :new-game [select-button #(dispatch [::events/first-reveal])]
+     :first-reveal [select-button #(dispatch [::events/second-reveal])]
+     :final-reveal [new-game-button])])

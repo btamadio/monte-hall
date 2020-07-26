@@ -23,3 +23,8 @@
  :<- [::doors]
  (fn [doors [_ id]]
    ((doors id) :open?)))
+
+(reg-sub
+ ::game-stage
+ (fn [db]
+   (:stage db)))

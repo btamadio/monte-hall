@@ -12,9 +12,14 @@
  (fn [db]
    (:selected-door db)))
 
-; (subscribe ::door 1) as an example
 (reg-sub
  ::door-selected?
+ :<- [::selected-door]
+ (fn [selected-door [_ id]]
+   (= selected-door id)))
+
+(reg-sub
+ ::door-open?
  :<- [::doors]
  (fn [doors [_ id]]
-   ((first (filter #(= id (:id %)) doors)) :selected?)))
+   ((doors id) :open?)))

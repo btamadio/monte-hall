@@ -1,28 +1,33 @@
 (ns monte-hall.events
   (:require
-   [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx reg-cofx]]
+   [re-frame.core :as rf]
    [monte-hall.db :as db]))
 
-(reg-event-db
+(rf/reg-event-db
  ::initialize-db
  (fn [_ _]
+   (rf/dispatch [::allocate-prize])
    db/default-db))
 
-(reg-event-fx
+(rf/reg-event-db
+ ::new-game
+ (fn [db _]
+   (merge db/new-game db)))
+
+(rf/reg-event-fx
  ::allocate-prize
- [(inject-cofx :random-int 3)]
+ [(rf/inject-cofx :random-int 3)]
  (fn [cofx _]
    (let [val (:random-int cofx)
          db (:db cofx)]
      {:db (assoc-in db [:doors val :prize?] true)})))
 
-(reg-event-db
+(rf/reg-event-db
  ::select-door
  (fn [db [_ id]]
-   (println db)
    (assoc db :selected-door id)))
 
-(reg-cofx
+(rf/reg-cofx
  :random-int
  (fn [coeffects val]
    (assoc coeffects :random-int (rand-int val))))

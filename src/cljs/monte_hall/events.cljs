@@ -6,22 +6,17 @@
 (rf/reg-event-db
  ::initialize-db
  (fn [_ _]
-   (rf/dispatch [::allocate-prize])
    db/default-db))
 
-(rf/reg-event-db
- ::new-game
- (fn [db _]
-   (rf/dispatch [::allocate-prize])
-   (merge db db/new-game)))
-
 (rf/reg-event-fx
- ::allocate-prize
+ ::new-game
  [(rf/inject-cofx :random-int 3)]
  (fn [cofx _]
-   (let [val (:random-int cofx)
-         db (:db cofx)]
-     {:db (assoc-in db [:doors val :prize?] true)})))
+   (let [db (:db cofx)
+         random-door (:random-int cofx)]
+     {:db (-> db
+              (merge db/new-game)
+              (assoc-in [:doors random-door :prize?] true))})))
 
 (rf/reg-event-db
  ::set-selected-door

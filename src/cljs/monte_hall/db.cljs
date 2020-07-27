@@ -11,7 +11,3 @@
 (def default-db
   (merge new-game {:history []}))
 
-(def game-fms
-  {:new-game :first-reveal
-   :first-reveal :final-reveal
-   :final-reveal :new-game})

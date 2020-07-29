@@ -1,0 +1,39 @@
+img.door {
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+img.door-selected{
+  border: 1px solid #264653;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+img.door-open{
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+img.door:hover {
+  box-shadow: 0 0 1px 1px #2A9D8F;
+}
+
+button {
+  border: none;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+button.select-door{
+  background-color: #264653;
+  color: white;
+}
+
+button.new-game{
+  background-color: #E76F51;
+  color: white;
+}

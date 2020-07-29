@@ -13,39 +13,50 @@
            "https://placekitten.com/200/300"
            "https://thriftyhomesteader.com/wp-content/uploads/2020/02/1.pin_-2-200x300.png")))
 
+(defn door-class
+  [open? selected?]
+  (if open? "door-open"
+      (if selected? "door-selected" "door"))
+)
+
 (defn door
-  [{:keys [id open? prize?]} selected?]
+  [{:keys [id open? prize? selected?]}]
   [:img#door {:src (door-image open? prize?)
               :width 200
               :height 300
-              :border (when selected? "5px")
+              :class (door-class open? selected?)
               :on-click (when (not open?) #(dispatch [::events/set-selected-door id]))}])
 
-(defn door-set
+(defn doors
   []
-  (let [doors @(subscribe [::subs/doors])
-        selected-door @(subscribe [::subs/selected-door])]
+  (let [doors @(subscribe [::subs/doors])]
     [:div
      (for [d doors]
-       ^{:key (:id d)} [door d (= (:id d) selected-door)])]))
+       ^{:key (:id d)} [door d])]))
 
 (defn select-button
   [on-click]
   (when-let [door-id @(subscribe [::subs/selected-door])]
-    
-    [:button {:on-click on-click}
+    [:button {:class "select-door"
+              :on-click on-click}
      "Choose Door " (inc door-id)]))
 
 (defn new-game-button
   []
-  [:button {:on-click #(dispatch [::events/new-game])}
+  [:button {:class "new-game"
+            :on-click #(dispatch [::events/new-game])}
    "New Game"])
+
+(defn play-button
+  []
+  (case @(subscribe [::subs/game-stage])
+    :new-game [select-button #(dispatch [::events/first-reveal])]
+    :first-reveal [select-button #(dispatch [::events/final-reveal])]
+    :final-reveal [new-game-button]))
 
 (defn main-panel
   []
   [:<>
-   [door-set]
-   (case @(subscribe [::subs/game-stage])
-     :new-game [select-button #(dispatch [::events/first-reveal])]
-     :first-reveal [select-button #(dispatch [::events/second-reveal])]
-     :final-reveal [new-game-button])])
+   [doors]
+   (when (= @(subscribe [::subs/game-mode]) :play) 
+     [play-button])])

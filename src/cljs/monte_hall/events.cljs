@@ -13,24 +13,35 @@
  [(rf/inject-cofx :random-int 3)]
  (fn [cofx _]
    (let [db (:db cofx)
-         random-door (:random-int cofx)]
+         random-door (:random-int cofx)
+         game-result (dissoc db :history :mode)]
      {:db (-> db
+              (update :history conj game-result)
               (merge db/new-game)
               (assoc-in [:doors random-door :prize?] true))})))
+
+(defn deselect-all
+  [doors]
+  (into [] (map #(assoc % :selected? false) doors)))
 
 (rf/reg-event-db
  ::set-selected-door
  (fn [db [_ id]]
-   (assoc db :selected-door id)))
+   (-> db
+       (assoc :doors (deselect-all (:doors db)))
+       (assoc-in [:doors id :selected?] true))))
 
-; Definitely should have some unit tests for this logic
+(defn eligible?
+  [door]
+  (and (not (door :prize?)) (not (door :selected?))))
+
 (defn first-reveal
-  [doors selected-door tiebreaker]
-  (let [choices (filter #(and (not (:prize? %)) (not= (:id %) selected-door)) doors)
-        num-choices (count choices)]
-    (if (= num-choices 1)
-      (:id  (first choices))
-      (:id (nth choices tiebreaker)))))
+  [doors tiebreaker]
+  (let [eligible (filter eligible? doors)
+        num-eligible (count eligible)]
+    (if (= num-eligible 1)
+      (:id (first eligible))
+      (:id (nth eligible tiebreaker)))))
 
 (rf/reg-event-fx
  ::first-reveal
@@ -38,18 +49,18 @@
  (fn [cofx [_ _]]
    (let [db (:db cofx)
          tiebreaker (:random-int cofx)
-         door-to-open (first-reveal (:doors db) (:selected-door db) tiebreaker)]
+         door-to-open (first-reveal (:doors db) tiebreaker)]
      {:db (-> db
               (assoc-in [:doors door-to-open :open?] true)
-              (assoc :stage :first-reveal))})))
+              (assoc :first-selection door-to-open))})))
 
 (rf/reg-event-db
- ::second-reveal
+ ::final-reveal
  (fn [db [_ _]]
-   (let [selected-door (:selected-door db)]
+   (let [selected-door (:id (first (filter :selected? (:doors db))))]
      (-> db
          (assoc-in [:doors selected-door :open?] true)
-         (assoc :stage :final-reveal)))))
+         (assoc :second-selection selected-door)))))
 
 (rf/reg-cofx
  :random-int

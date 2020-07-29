@@ -8,15 +8,21 @@
    (:doors db)))
 
 (reg-sub
- ::selected-door
+ ::game-mode
  (fn [db]
-   (:selected-door db)))
+   (:mode db)))
 
 (reg-sub
  ::door-selected?
- :<- [::selected-door]
- (fn [selected-door [_ id]]
-   (= selected-door id)))
+ :<- [::doors]
+ (fn [doors [_ id]]
+   ((doors id) :selected?)))
+
+(reg-sub
+ ::door-prize?
+ :<- [::doors]
+ (fn [doors [_ id]]
+   ((doors id) :prize?)))
 
 (reg-sub
  ::door-open?
@@ -25,6 +31,15 @@
    ((doors id) :open?)))
 
 (reg-sub
+ ::selected-door
+ :<- [::doors]
+ (fn [doors [_ _]]
+   (:id (first (filter :selected? doors)))))
+
+(reg-sub
  ::game-stage
  (fn [db]
-   (:stage db)))
+   (cond
+     (nil? (:first-selection db)) :new-game
+     (nil? (:second-selection db)) :first-reveal
+     :else :final-reveal)))

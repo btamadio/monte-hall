@@ -2,12 +2,12 @@
 
 (def new-game
   {:doors
-   [{:id 0 :open? false :prize? false}
-    {:id 1 :open? false :prize? false}
-    {:id 2 :open? false :prize? false}]
-   :selected-door nil
-   :stage :new-game})
+   [{:id 0 :open? false :prize? false :selected? false}
+    {:id 1 :open? false :prize? false :selected? false}
+    {:id 2 :open? false :prize? false :selected? false}]
+   :first-selection nil
+   :second-selection nil})
 
 (def default-db
-  (merge new-game {:history []}))
+  (merge new-game {:mode :play :history []}))
 

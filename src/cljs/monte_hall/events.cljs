@@ -3,10 +3,14 @@
    [re-frame.core :as rf]
    [monte-hall.db :as db]))
 
-(rf/reg-event-db
+(rf/reg-event-fx
  ::initialize-db
- (fn [_ _]
-   db/default-db))
+ [(rf/inject-cofx :random-int 3)]
+ (fn [cofx _]
+   (let [db (:db cofx)
+         random-door (:random-int cofx)
+         db db/default-db]
+     {:db (assoc-in db [:doors random-door :prize?] true)})))
 
 (rf/reg-event-fx
  ::new-game

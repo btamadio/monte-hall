@@ -2,6 +2,7 @@
   (:require
    [re-frame.core :refer [reg-sub]]))
 
+; Level 2 subs: just extract keys from DB
 (reg-sub
  ::doors
  (fn [db]
@@ -12,6 +13,22 @@
  (fn [db]
    (:mode db)))
 
+(reg-sub
+ ::history
+ (fn [db]
+   (:history db)))
+
+(reg-sub
+ ::first-selection
+ (fn [db]
+   (:first-selection db)))
+
+(reg-sub
+ ::second-selection
+ (fn [db]
+   (:second-selection db)))
+
+; Level 3 subs: derived from level 2
 (reg-sub
  ::door-selected?
  :<- [::doors]
@@ -38,8 +55,10 @@
 
 (reg-sub
  ::game-stage
- (fn [db]
+ :<- [::first-selection]
+ :<- [::second-selection]
+ (fn [[first-selection second-selection] [_ _]]
    (cond
-     (nil? (:first-selection db)) :new-game
-     (nil? (:second-selection db)) :first-reveal
+     (nil? first-selection) :new-game
+     (nil? second-selection) :first-reveal
      :else :final-reveal)))

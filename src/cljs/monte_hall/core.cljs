@@ -20,6 +20,5 @@
 
 (defn init []
   (re-frame/dispatch-sync [::events/initialize-db])
-  (re-frame/dispatch-sync [::events/new-game])
   (dev-setup)
   (mount-root))

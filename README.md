@@ -1,2 +1,2 @@
 # monte-hall
-Interactive Monty Hall Simulator
+Interactive Monty Hall simulator, written in ClojureScript

@@ -1,5 +1,7 @@
-
+html,
 body{
+    margin: 0;
+    height: 100%;
     font: 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -71,3 +73,16 @@ th {
     width: 20%;
     float: left;
 }
+
+.footer{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 75px;
+    background-color: #2A9D8F;
+}
+
+a {
+    color: white;
+}
+

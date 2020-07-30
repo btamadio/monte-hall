@@ -85,5 +85,6 @@
       [doors]
       (when (= game-mode :play) [play-button])
       (when (= game-stage :final-reveal) [:p "You " game-result "!"])]
-     [:div.conf-matrix
-      [conf-matrix-table conf-matrix]]]))
+     [:div [:div.conf-matrix
+            [conf-matrix-table conf-matrix]]]
+     [:div.footer [:a {:href "https://github.com/btamadio/monte-hall"} "Source code"]]]))

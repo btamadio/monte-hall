@@ -28,7 +28,16 @@
  (fn [db]
    (:second-selection db)))
 
-; Level 3 subs: derived from level 2
+(reg-sub
+ ::winner?
+ (fn [db]
+   (:winner? db)))
+
+(reg-sub
+ ::switched?
+ (fn [db]
+   (:switched? db)))
+                                        ; Level 3 subs: derived from level 2
 (reg-sub
  ::door-selected?
  :<- [::doors]
@@ -62,3 +71,10 @@
      (nil? first-selection) :new-game
      (nil? second-selection) :first-reveal
      :else :final-reveal)))
+
+(reg-sub
+ ::game-result
+ :<- [::switched?]
+ :<- [::winner?]
+ (fn [[switched? winner?] [_ _]]
+   (str (if switched? "switched" "stayed") " and " (if winner? "won" "lost"))))

@@ -49,14 +49,18 @@
 
 (defn play-button
   []
-  (case @(subscribe [::subs/game-stage])
-    :new-game [select-button #(dispatch [::events/first-reveal])]
-    :first-reveal [select-button #(dispatch [::events/final-reveal])]
-    :final-reveal [new-game-button]))
+  (let [game-stage @(subscribe [::subs/game-stage])]
+    (case game-stage
+      :new-game [select-button #(dispatch [::events/first-reveal])]
+      :first-reveal [select-button #(dispatch [::events/final-reveal])]
+      :final-reveal [new-game-button])))
 
 (defn main-panel
   []
-  [:<>
-   [doors]
-   (when (= @(subscribe [::subs/game-mode]) :play) 
-     [play-button])])
+  (let [game-mode @(subscribe [::subs/game-mode])
+        game-stage @(subscribe [::subs/game-stage])
+        game-result @(subscribe [::subs/game-result])]
+    [:<>
+     [doors]
+     (when (= game-mode :play) [play-button])
+     (when (= game-stage :final-reveal) [:p game-result])]))

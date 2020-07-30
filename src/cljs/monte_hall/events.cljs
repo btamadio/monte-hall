@@ -53,18 +53,24 @@
  (fn [cofx [_ _]]
    (let [db (:db cofx)
          tiebreaker (:random-int cofx)
-         door-to-open (first-reveal (:doors db) tiebreaker)]
+         door-to-open (first-reveal (:doors db) tiebreaker)
+         selected-door (:id (first (filter :selected? (:doors db))))]
      {:db (-> db
               (assoc-in [:doors door-to-open :open?] true)
-              (assoc :first-selection door-to-open))})))
+              (assoc :first-selection selected-door))})))
 
 (rf/reg-event-db
  ::final-reveal
  (fn [db [_ _]]
-   (let [selected-door (:id (first (filter :selected? (:doors db))))]
+   (let [selected-door (:id (first (filter :selected? (:doors db))))
+         prize-door (:id (first (filter :prize? (:doors db))))
+         winner? (= selected-door prize-door)
+         switched? (not= (:first-selection db) selected-door)]
      (-> db
          (assoc-in [:doors selected-door :open?] true)
-         (assoc :second-selection selected-door)))))
+         (assoc :second-selection selected-door)
+         (assoc :switched? switched?)
+         (assoc :winner? winner?)))))
 
 (rf/reg-cofx
  :random-int

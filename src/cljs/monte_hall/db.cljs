@@ -6,8 +6,9 @@
     {:id 1 :open? false :prize? false :selected? false}
     {:id 2 :open? false :prize? false :selected? false}]
    :first-selection nil
-   :second-selection nil})
+   :second-selection nil
+   :winner? nil
+   :switched? nil})
 
 (def default-db
   (merge new-game {:mode :play :history []}))
-

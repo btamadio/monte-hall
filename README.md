@@ -1,4 +1,2 @@
 # monte-hall
-Interactive Monty Hall simulator, written in ClojureScript
-
-[site](https://btamadio.github.io/montehall/index.html)
+[Interactive Monty Hall simulator](https://btamadio.github.io/montehall/index.html)

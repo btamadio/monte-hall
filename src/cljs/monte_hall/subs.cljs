@@ -78,3 +78,19 @@
  :<- [::winner?]
  (fn [[switched? winner?] [_ _]]
    (str (if switched? "switched" "stayed") " and " (if winner? "won" "lost"))))
+
+(defn conf-reducer
+  [conf-matrix {:keys [switched? winner?]}]
+  (update conf-matrix
+          (cond
+            (and switched? winner?) :switched-won
+            (and switched? (not winner?)) :switched-lost
+            (and (not switched?) winner?) :stayed-won
+            (and (not switched?) (not winner?)) :stayed-lost)
+          inc))
+
+(reg-sub
+ ::confusion-matrix
+ :<- [::history]
+ (fn [history [_ _]]
+   (reduce conf-reducer {:switched-won 0 :switched-lost 0 :stayed-won 0 :stayed-lost 0} history)))

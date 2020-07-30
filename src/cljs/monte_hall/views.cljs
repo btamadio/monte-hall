@@ -10,7 +10,9 @@
   (case open?
     false "http://www.sbrusticdoors.com/wp-content/uploads/2011/11/double-big-arch-rustic-door-200x300.jpg"
     true (if prize?
-           "https://placekitten.com/200/300"
+;           "https://i.giphy.com/media/3ov9jWu7BuHufyLs7m/giphy.gif"
+           "https://i.giphy.com/media/l1rrKjeprm2VsbCc1w/giphy.gif"
+;           "https://placekitten.com/200/300"
            "https://thriftyhomesteader.com/wp-content/uploads/2020/02/1.pin_-2-200x300.png")))
 
 (defn door-class
@@ -56,12 +58,32 @@
       :first-reveal [select-button #(dispatch [::events/final-reveal])]
       :final-reveal [new-game-button])))
 
+(defn conf-matrix-table
+  [conf-matrix]
+  [:table
+   [:thead [:tr
+            [:td]
+            [:th {:scope "col"} "won"]
+            [:th {:scope "col"} "lost"]]]
+   [:tbody [:tr
+            [:th {:scopoe "row"} "switched"]
+            [:td (:switched-won conf-matrix)]
+            [:td (:switched-lost conf-matrix)]]
+    [:tr
+     [:th {:scope "row"} "stayed"]
+     [:td (:stayed-won conf-matrix)]
+     [:td (:stayed-lost conf-matrix)]]]])
+
 (defn main-panel
   []
   (let [game-mode @(subscribe [::subs/game-mode])
         game-stage @(subscribe [::subs/game-stage])
-        game-result @(subscribe [::subs/game-result])]
+        game-result @(subscribe [::subs/game-result])
+        conf-matrix @(subscribe [::subs/confusion-matrix])]
     [:<>
-     [doors]
-     (when (= game-mode :play) [play-button])
-     (when (= game-stage :final-reveal) [:p "You " game-result "!"])]))
+     [:div.game
+      [doors]
+      (when (= game-mode :play) [play-button])
+      (when (= game-stage :final-reveal) [:p "You " game-result "!"])]
+     [:div.conf-matrix
+      [conf-matrix-table conf-matrix]]]))

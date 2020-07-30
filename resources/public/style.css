@@ -1,3 +1,8 @@
+
+body{
+    font: 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 img.door {
   border: 1px solid white;
   border-radius: 4px;
@@ -18,6 +23,7 @@ img.door-open{
 
 img.door:hover {
   box-shadow: 0 0 1px 1px #2A9D8F;
+
 }
 
 button {
@@ -36,4 +42,32 @@ button.select-door{
 button.new-game{
   background-color: #E76F51;
   color: white;
+}
+
+.game{
+    width: 60%;
+    float: left;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+td, th {
+    border: 1px solid white;
+    width: 4rem;
+    height: 2rem;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+th {
+    background: #2A9D8F;
+    border-color: white;
+    color: white;
+}
+
+.conf-matrix{
+    width: 20%;
+    float: left;
 }

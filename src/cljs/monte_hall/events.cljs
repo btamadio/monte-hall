@@ -18,7 +18,7 @@
  (fn [cofx _]
    (let [db (:db cofx)
          random-door (:random-int cofx)
-         game-result (dissoc db :history :mode)]
+         game-result (select-keys db [:winner? :switched?])]
      {:db (-> db
               (update :history conj game-result)
               (merge db/new-game)

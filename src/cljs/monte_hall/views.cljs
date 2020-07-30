@@ -36,10 +36,11 @@
 
 (defn select-button
   [on-click]
-  (when-let [door-id @(subscribe [::subs/selected-door])]
+  (if-let [door-id @(subscribe [::subs/selected-door])]
     [:button {:class "select-door"
               :on-click on-click}
-     "Choose Door " (inc door-id)]))
+     "Choose Door " (inc door-id)]
+    [:p "Choose a door!"]))
 
 (defn new-game-button
   []
@@ -63,4 +64,4 @@
     [:<>
      [doors]
      (when (= game-mode :play) [play-button])
-     (when (= game-stage :final-reveal) [:p game-result])]))
+     (when (= game-stage :final-reveal) [:p "You " game-result "!"])]))

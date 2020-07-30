@@ -1,2 +1,2 @@
-# Monte-Hall 
+# monte-hall
 Interactive Monty Hall Simulator

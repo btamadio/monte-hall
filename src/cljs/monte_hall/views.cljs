@@ -16,9 +16,10 @@
   [{:keys [id open? prize? selected?]}]
   [:div.card.has-text-centered {:on-click (when (not open?) #(dispatch [::events/set-selected-door id]))}
    [:div.card-content
-    [:img.door {:src (door-image open? prize?)
-                :height (if open? 300 200)
-                :width (if open? 300 200)}]]])
+    [:figure.image
+     [:img.door {:src (door-image open? prize?)
+                 :height (if open? 300 200)
+                 :width (if open? 300 200)}]]]])
 
 (defn doors
   []

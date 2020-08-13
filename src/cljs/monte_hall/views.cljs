@@ -8,7 +8,7 @@
 (defn door-image
   [open? prize?]
   (case open?
-    false "images/closed-door.jpg"
+    false "images/door.jpg"
     true (if prize? "images/prize.gif" "images/goat.png")))
 
 
